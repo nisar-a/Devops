@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        IMAGE_NAME = "sivagurunathan7/test_repository"
+        IMAGE_NAME = "rohith87/test"          // Replace with your Docker Hub username and image name
         TAG = "latest"
         CONTAINER_NAME = "my-container"
         PORT = "3001"
@@ -13,23 +13,23 @@ pipeline {
         stage('Clone Repository') {
             steps {
                 echo "Cloning GitHub repository..."
-                git 'https://github.com/Sivagurunathan98/New_docker_push.git'
+                git branch:'main',url:'https://github.com/nisar-a/Devops.git'  // Replace with your repo URL
             }
         }
 
         stage('Build Docker Image') {
             steps {
                 echo "Building Docker image..."
-                bat 'powershell.exe -Command "Set-ExecutionPolicy RemoteSigned -Force"'
-                bat 'powershell.exe -File .\\Build.ps1'
+                sh 'chmod +x build.sh'
+                sh './build.sh'
             }
         }
 
-        stage('Login to Docker Hub') {
+                stage('Login to Docker Hub') {
             steps {
                 echo "Logging into Docker Hub..."
                 withCredentials([usernamePassword(credentialsId: 'docker-hub-creds', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
-                    bat 'echo %DOCKER_PASS% | docker login -u %DOCKER_USER% --password-stdin'
+                    sh 'docker login -u $DOCKER_USER -p $DOCKER_PASS'
                 }
             }
         }
@@ -37,15 +37,16 @@ pipeline {
         stage('Push Docker Image') {
             steps {
                 echo "Pushing Docker image to Docker Hub..."
-                bat "docker tag %IMAGE_NAME%:%TAG% %IMAGE_NAME%:%TAG%"
-                bat "docker push %IMAGE_NAME%:%TAG%"
+                sh "docker tag $IMAGE_NAME:$TAG $IMAGE_NAME:$TAG"
+                sh "docker push $IMAGE_NAME:$TAG"
             }
         }
 
         stage('Deploy Docker Container') {
             steps {
                 echo "Deploying Docker container..."
-                bat 'powershell.exe -File .\\Deploy.ps1'
+                sh 'chmod +x deploy.sh'
+                sh './deploy.sh'
             }
         }
     }
