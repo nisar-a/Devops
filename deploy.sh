@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Set Docker image name, tag, and container name
-IMAGE_NAME="nadinc/docker"
+IMAGE_NAME="22itr073/project1"
 TAG="latest"
 CONTAINER_NAME="my-container"
 
