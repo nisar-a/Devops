@@ -1,21 +1,11 @@
-# Use Node.js Alpine base image
-FROM node:alpine
+# Base image
+FROM nginx:latest
 
-# Create and set the working directory inside the container
-WORKDIR /app
+# Copy the HTML file to NGINX default location
+COPY index.html /usr/share/nginx/html/index.html
 
-# Copy package.json and package-lock.json to the working directory
-COPY package.json package-lock.json /app/
+# Expose port 80
+EXPOSE 80
 
-# Install dependencies
-RUN npm install
-
-# Copy the entire codebase to the working directory
-COPY . /app/
-
-# Expose the port your app runs on (replace <PORT_NUMBER> with your app's actual port)
-EXPOSE 3000
-
-# Define the command to start your application (replace "start" with the actual command to start your app)
-CMD ["npm", "start"]
-
+# Start NGINX
+CMD ["nginx", "-g", "daemon off;"]
